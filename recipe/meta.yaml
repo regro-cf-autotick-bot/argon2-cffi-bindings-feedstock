@@ -1,5 +1,5 @@
 {% set name = "argon2-cffi-bindings" %}
-{% set version = "25.1.0" %}
+{% set version = "26.1.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,15 +7,15 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name | replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: "b957f3e6ea4d55d820e40ff76f450952807013d361a65d7f28acc0acbf29229d"
+  sha256: "63505c71542a44b68b1e38060450fb006404170da375feb31af153e7f9c6205d"
 
 build:
-  number: 2
+  number: 0
   script_env:
     - ARGON2_CFFI_USE_SSE2=0  # [not x86_64]
   script:
     - ln -sf $RANLIB $BUILD_PREFIX/bin/ranlib  # [unix]
-    - {{ PYTHON }} -m pip install . -vv
+    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   build:
@@ -25,15 +25,16 @@ requirements:
     - cffi >=2.0.0b1                         # [py >= 314 and build_platform != target_platform]
     - {{ compiler("c") }}
     - {{ stdlib("c") }}
+    - cmake
+    - ninja
 
   host:
     - python
     - pip
     - cffi >=1.0.1                           # [py < 314]
     - cffi >=2.0.0b1                         # [py >= 314]
-    - setuptools >=45
-    - setuptools_scm >=6.2
-    - wheel
+    - scikit-build-core >=1.0
+    - setuptools_scm >=8
 
   run:
     - python
