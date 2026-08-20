@@ -15,14 +15,15 @@ build:
     - ARGON2_CFFI_USE_SSE2=0  # [not x86_64]
   script:
     - ln -sf $RANLIB $BUILD_PREFIX/bin/ranlib  # [unix]
+    # Without this CMake falls back to "Unix Makefiles" and there is no make
+    # in the build env, so configuration fails before a compiler is probed.
+    - export CMAKE_GENERATOR=Ninja  # [unix]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - cffi >=1.0.1                           # [py < 314 and build_platform != target_platform]
-    - cffi >=2.0.0b1                         # [py >= 314 and build_platform != target_platform]
     - {{ compiler("c") }}
     - {{ stdlib("c") }}
     - cmake
@@ -31,8 +32,6 @@ requirements:
   host:
     - python
     - pip
-    - cffi >=1.0.1                           # [py < 314]
-    - cffi >=2.0.0b1                         # [py >= 314]
     - scikit-build-core >=1.0
     - setuptools_scm >=8
 
