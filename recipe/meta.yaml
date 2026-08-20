@@ -18,6 +18,12 @@ build:
     # Without this CMake falls back to "Unix Makefiles" and there is no make
     # in the build env, so configuration fails before a compiler is probed.
     - export CMAKE_GENERATOR=Ninja  # [unix]
+    # FindPython has to run the interpreter to locate headers, which CMP0190
+    # forbids while cross-compiling. Upstream's cmake_minimum_required
+    # (3.20...4.3) raises the policy max past 4.1, so the policy is NEW here
+    # and every cross target fails to find Python. conda's cross-python ships
+    # a native shim that answers for the target, so running it is safe.
+    - export CMAKE_ARGS="${CMAKE_ARGS} -DCMAKE_CROSSCOMPILING_EMULATOR=/usr/bin/env"  # [build_platform != target_platform]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
@@ -26,10 +32,7 @@ requirements:
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
     - {{ compiler("c") }}
     - {{ stdlib("c") }}
-    # 4.4 has cross-compilation and stable-ABI bugs, and this package hits
-    # both: find_package(Python ... Development.SABIModule) fails on every
-    # cross target. See conda-forge/argon2-cffi-bindings-feedstock#14.
-    - cmake <4.4
+    - cmake
     - ninja
 
   host:
