@@ -14,6 +14,7 @@ build:
   script_env:
     - ARGON2_CFFI_USE_SSE2=0  # [not x86_64]
   script:
+    - export CMAKE_GENERATOR=Ninja
     - ln -sf $RANLIB $BUILD_PREFIX/bin/ranlib  # [unix]
     - {{ PYTHON }} -m pip install . -vv
 
@@ -35,7 +36,6 @@ requirements:
     - pip
     - scikit-build-core >=1.0
     - setuptools-scm >=8
-    - wheel
 
   run:
     - python
