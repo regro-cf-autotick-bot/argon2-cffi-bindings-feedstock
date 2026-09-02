@@ -47,11 +47,16 @@ requirements:
     - cffi >=2.0.0b1                         # [py >= 314]
 
 test:
+  files:
+    - test_bindings.py
+    - test_win_arm64.py  # [win and arm64]
   imports:
     - _argon2_cffi_bindings
   requires:
     - pip
   commands:
+    - python test_bindings.py
+    - python test_win_arm64.py  # [win and arm64]
     - pip check
 
 about:
